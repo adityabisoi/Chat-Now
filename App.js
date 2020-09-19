@@ -8,13 +8,13 @@ import 'firebase/firestore'
 import AsyncStorage from '@react-native-community/async-storage'
 
 var firebaseConfig = {
-  apiKey: "AIzaSyCJhqE3Dg5RegbP4OhKOzl5vSqVFkDNKdA",
-  authDomain: "chat-now-6d4ae.firebaseapp.com",
-  databaseURL: "https://chat-now-6d4ae.firebaseio.com",
-  projectId: "chat-now-6d4ae",
-  storageBucket: "chat-now-6d4ae.appspot.com",
-  messagingSenderId: "627102683376",
-  appId: "1:627102683376:web:54c678720a1c8b16b83235"
+  apiKey: "",
+  authDomain: "",
+  databaseURL: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
 }
 
 if (firebase.apps.length === 0) {
