@@ -1,8 +1,9 @@
 // @refresh reset
-import { StatusBar } from 'expo-status-bar';
-import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View,TextInput, YellowBox, Button } from 'react-native';
+import { StatusBar } from 'expo-status-bar'
+import React, {useState, useEffect} from 'react'
+import { StyleSheet, Text, View,TextInput, YellowBox, Button } from 'react-native'
 import * as firebase from 'firebase'
+import {GiftedChat} from 'react-native-gifted-chat'
 import 'firebase/firestore'
 import AsyncStorage from '@react-native-community/async-storage'
 
@@ -23,13 +24,27 @@ if (firebase.apps.length === 0) {
 
 YellowBox.ignoreWarnings(['Setting a timer for a long period of time'])
 
+const db = firebase.firestore()
+const chatsRef = db.collection('chats')
+
 export default function App() {
   const [user, setUser] = useState(null)
   const [name, setName] = useState('')
+  const [message, setMessage] = useState([])
 
   useEffect(()=> {
     readUser()
-  })
+    const unsubscribe = chatsRef.onSnapshot((querySnapshot) => {
+      const messagesFirestore = querySnapshot.docChanges()
+      .filter(({type})=>type==='added')
+      .map(({doc})=>{
+        const message = doc.data()
+        return {...message, createdAt: message.createdAt.toDate()}
+      })
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+        setMessage(messagesFirestore)
+    })
+  },[])
 
   async function readUser() {
     const user = await AsyncStorage.getItem('user')
