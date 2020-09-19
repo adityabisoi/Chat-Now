@@ -1,7 +1,7 @@
 // @refresh reset
 import { StatusBar } from 'expo-status-bar';
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View,TextInput, YellowBox } from 'react-native';
+import { StyleSheet, Text, View,TextInput, YellowBox, Button } from 'react-native';
 import * as firebase from 'firebase'
 import 'firebase/firestore'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -25,6 +25,8 @@ YellowBox.ignoreWarnings(['Setting a timer for a long period of time'])
 
 export default function App() {
   const [user, setUser] = useState(null)
+  const [name, setName] = useState('')
+
   useEffect(()=> {
     readUser()
   })
@@ -36,10 +38,18 @@ export default function App() {
     }
   }
 
+  async function handlePress() {
+   const _id = Math.random().toString(36).substring(7)
+   const user = {_id,name}
+   await AsyncStorage.setItem('user', JSON.stringify(user))
+   setUser(user)
+  }
+
   if (!user) {
     return (
       <View style={styles.container}>
-        <TextInput style={styles.input} placeholder='Enter your name'/>
+        <TextInput style={styles.input} placeholder='Enter your name' value={name} onChangeText={setName}/>
+        <Button title='Enter the chat' onPress={handlePress}/>
       </View>
     )
   }
@@ -65,6 +75,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderWidth: 1,
     padding: 15,
-    borderColor: 'gray'
+    borderColor: 'gray',
+    marginBottom: 20
   }
 });
