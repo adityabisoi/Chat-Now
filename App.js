@@ -1,6 +1,6 @@
 // @refresh reset
 import { StatusBar } from 'expo-status-bar'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 import { StyleSheet, Text, View,TextInput, YellowBox, Button } from 'react-native'
 import * as firebase from 'firebase'
 import {GiftedChat} from 'react-native-gifted-chat'
@@ -30,7 +30,7 @@ const chatsRef = db.collection('chats')
 export default function App() {
   const [user, setUser] = useState(null)
   const [name, setName] = useState('')
-  const [message, setMessage] = useState([])
+  const [messages, setMessages] = useState([])
 
   useEffect(()=> {
     readUser()
@@ -38,12 +38,13 @@ export default function App() {
       const messagesFirestore = querySnapshot.docChanges()
       .filter(({type})=>type==='added')
       .map(({doc})=>{
-        const message = doc.data()
-        return {...message, createdAt: message.createdAt.toDate()}
+        const messages = doc.data()
+        return {...messages, createdAt: messages.createdAt.toDate()}
       })
         .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-        setMessage(messagesFirestore)
+      messageOrder(messagesFirestore)
     })
+    return () => unsubscribe()
   },[])
 
   async function readUser() {
@@ -60,6 +61,17 @@ export default function App() {
    setUser(user)
   }
 
+  async function handleSend(messages) {
+    const write = messages.map(m=>chatsRef.add(m))
+    await Promise.all(write)
+  }
+
+  const messageOrder = useCallback(messages => {
+    setMessages(prevMessages => {
+      GiftedChat.append(prevMessages,messages)
+    })
+  },[messages])
+
   if (!user) {
     return (
       <View style={styles.container}>
@@ -70,10 +82,7 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+      <GiftedChat messages={messages} user={user} onSend={handleSend} />
   );
 }
 
