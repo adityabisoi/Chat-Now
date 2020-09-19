@@ -1,9 +1,10 @@
 // @refresh reset
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, YellowBox } from 'react-native';
 import * as firebase from 'firebase'
 import 'firebase/firestore'
+import AsyncStorage from '@react-native-community/async-storage'
 
 var firebaseConfig = {
   apiKey: "AIzaSyCJhqE3Dg5RegbP4OhKOzl5vSqVFkDNKdA",
@@ -23,6 +24,15 @@ if (firebase.apps.length === 0) {
 YellowBox.ignoreWarnings(['Setting a timer for a long period of time'])
 
 export default function App() {
+  const [user, setUser] = useState(null)
+  useEffect(()=> {
+    readUser()
+  })
+
+  async function readUser() {
+
+  }
+
   return (
     <View style={styles.container}>
       <Text>Open up App.js to start working on your app!</Text>
