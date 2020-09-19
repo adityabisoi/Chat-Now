@@ -1,7 +1,7 @@
 // @refresh reset
 import { StatusBar } from 'expo-status-bar';
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, YellowBox } from 'react-native';
+import { StyleSheet, Text, View,TextInput, YellowBox } from 'react-native';
 import * as firebase from 'firebase'
 import 'firebase/firestore'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -30,7 +30,18 @@ export default function App() {
   })
 
   async function readUser() {
+    const user = await AsyncStorage.getItem('user')
+    if (user) {
+      setUser(JSON.parse(user))
+    }
+  }
 
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <TextInput style={styles.input} placeholder='Enter your name'/>
+      </View>
+    )
   }
 
   return (
@@ -47,5 +58,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 30
   },
+  input: {
+    height: 50,
+    width: '100%',
+    borderWidth: 1,
+    padding: 15,
+    borderColor: 'gray'
+  }
 });
